@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Employees";
+    int slNo = 1;
+}
+@model List<EmployeeMasterModel>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    @if (Model != null && Model.Any())
+    {
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <a asp-action="CreateEmployee" asp-controller="Employee" class="btn btn-primary float-end"><i class="bx bx-plus me-1"></i>Add Employee</a>
+            </div>
+        </div>
+        <!-- Hoverable Table rows -->
+        <div class="card">
+            <div class="table-responsive text-nowrap">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sl. No</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Date of Birth</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-border-bottom-0">
+                        @foreach (var emp in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span>@slNo</span>
+                                </td>
+                                <td>
+                                    <span>@emp.EmployeeName</span>
+                                </td>
+                                <td>
+                                    @emp.Email
+                                </td>
+                                <td>
+                                    @emp.Gender
+                                </td>
+                                <td>
+                                    @emp.DateOfBirth?.ToString("dd-MMM-yyyy")
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a href="#" class="dropdown-item">
+                                                <i class="bx bx-edit-alt me-1"></i> Edit
+                                            </a>
+                                            <!--Delete-->
+                                            <a href="#" class="dropdown-item text-danger">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            slNo++; //increment
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--/ Hoverable Table rows -->
+    }
+    else
+    {
+        <div class="container-xxl container-p-y">
+            <div class="misc-wrapper">
+                <h4 class="mb-2 mx-2">⚠️ No Data Found </h4>
+                <a asp-action="CreateEmployee" asp-controller="Employee" class="btn btn-primary mb-6 mx-2">Add Employee</a>
+            </div>
+        </div>
+    }
+</div>

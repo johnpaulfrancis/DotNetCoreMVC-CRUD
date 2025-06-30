@@ -1,4 +1,5 @@
 ﻿using DotNetCoreMVC_CRUD.Data;
+using DotNetCoreMVC_CRUD.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,17 @@ namespace DotNetCoreMVC_CRUD.Controllers
         public async Task<IActionResult> Index()
         {
             var employees = await _appDbContext.EmployeeMaster.ToListAsync();
-            return View(employees);
+            List<EmployeeMasterModel> empModel = employees.Select(e => new EmployeeMasterModel
+            {
+                EmployeeId = e.EmployeeId,
+                EmployeeName = e.EmployeeName,
+                Email = e.Email,
+                Gender = e.Gender,
+                DateOfBirth =e.DateOfBirth,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt
+            }).ToList(); // Mapping to view model from db schema model class
+            return View(empModel);
         }
     }
 }
