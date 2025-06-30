@@ -65,5 +65,25 @@ namespace DotNetCoreMVC_CRUD.Controllers
             }
             return View(employeeModel); // If the model state is invalid, return the same view with the model to show validation errors
         }
+
+        // POST: DeleteEmployee
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEmployee(int empId)
+        {
+            if (empId <= 0)
+            {
+                return NotFound(); // If empId is invalid, return NotFound
+            }
+            var employee = await _appDbContext.EmployeeMaster.FindAsync(empId);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            _appDbContext.EmployeeMaster.Remove(employee); // Remove the employee from the database context
+            await _appDbContext.SaveChangesAsync();
+            return RedirectToAction("Index"); // Redirect to the Index action after successful deletion
+        }
     }
 }
