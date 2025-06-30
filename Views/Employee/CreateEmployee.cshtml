@@ -1,0 +1,68 @@
+﻿@model EmployeeMasterModel
+@{
+    ViewData["Title"] = "Create Employee";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title text-primary mb-5">Create Employee</h4>
+                <form asp-action="CreateEmployee">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="EmployeeId" />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="EmployeeName" class="form-label">Name<span style="color:red">*</span></label>
+                            <input asp-for="EmployeeName" class="form-control" placeholder="john doe" />
+                            <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Email" class="form-label">Email<span style="color:red">*</span></label>
+                            <input asp-for="Email" class="form-control" placeholder="johndoe@email.com" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Gender" class="form-label">Gender<span style="color:red">*</span></label>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <input id="gendMale" type="radio" class="form-check-input" value="M" asp-for="Gender" />
+                                        <label for="gendMale">Male</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input id="gendFemale" type="radio" class="form-check-input" value="F" asp-for="Gender" />
+                                        <label for="gendFemale">Female</label>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input id="gendOthers" type="radio" class="form-check-input" value="O" asp-for="Gender" />
+                                        <label for="gendOthers">Others</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" class="form-control datepicker" type="text" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-5 mt-5 text-center">
+                        <button type="submit" class="btn btn-primary"><span class="tf-icons bx bx-check bx-20px me-2"></span>Save</button>
+                        <a asp-action="Index" class="btn btn-outline-dark" type="button"><span class="tf-icons bx bx-x bx-20px me-2"></span>Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--For client side validation script-->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

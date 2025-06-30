@@ -31,5 +31,13 @@ namespace DotNetCoreMVC_CRUD.Controllers
             }).ToList(); // Mapping to view model from db schema model class
             return View(empModel);
         }
+
+        //GET: Employee/Create
+        // This action method is used to display the form for creating a new employee
+        [HttpGet]
+        public IActionResult CreateEmployee()
+        {
+            return View();
+        }
     }
 }
