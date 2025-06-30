@@ -5,7 +5,7 @@ namespace DotNetCoreMVC_CRUD.Models
 {
     public class EmployeeMasterModel
     {
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
 
         [Required(ErrorMessage = "Please enter employee name")]// NOT NULL in DB and message in view
         [StringLength(50, ErrorMessage = "Employee name must be a string with a minimum length of 3 and a maximum length of 50", MinimumLength = 3)] //Max and Min length (Model)
