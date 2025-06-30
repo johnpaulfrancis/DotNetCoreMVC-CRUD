@@ -1,12 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DotNetCoreMVC_CRUD.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetCoreMVC_CRUD.Controllers
 {
     public class EmployeeController : Controller
     {
-        public IActionResult Index()
+        private readonly AppDbContext _appDbContext;
+
+        public EmployeeController(AppDbContext appDbContext)
         {
-            return View();
+            _appDbContext = appDbContext;
         }
+
     }
 }
