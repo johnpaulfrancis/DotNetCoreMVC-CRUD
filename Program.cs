@@ -1,4 +1,6 @@
 using DotNetCoreMVC_CRUD.Data;
+using DotNetCoreMVC_CRUD.HelperClass;
+using DotNetCoreMVC_CRUD.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +11,10 @@ builder.Services.AddControllersWithViews();
 // Register the DbContext with dependency injection
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<EncryptDecryptModel>(builder.Configuration.GetSection("EncryptionSettings"));
+// Register the EncryptDecrypt as a singleton service
+builder.Services.AddSingleton<EncryptDecrypt>();
 
 var app = builder.Build();
 

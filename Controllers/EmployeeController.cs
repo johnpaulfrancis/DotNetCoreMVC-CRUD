@@ -1,18 +1,22 @@
 ﻿using DotNetCoreMVC_CRUD.Data;
+using DotNetCoreMVC_CRUD.HelperClass;
 using DotNetCoreMVC_CRUD.Models;
 using DotNetCoreMVC_CRUD.Models.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace DotNetCoreMVC_CRUD.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly AppDbContext _appDbContext;
+        private readonly EncryptDecrypt _encryptDecrypt;
 
-        public EmployeeController(AppDbContext appDbContext)
+        public EmployeeController(AppDbContext appDbContext, EncryptDecrypt encryptDecrypt)
         {
             _appDbContext = appDbContext;
+            _encryptDecrypt = encryptDecrypt;
         }
 
         // GET: Employee
@@ -23,6 +27,7 @@ namespace DotNetCoreMVC_CRUD.Controllers
             List<EmployeeMasterModel> empModel = employees.Select(e => new EmployeeMasterModel
             {
                 EmployeeId = e.EmployeeId,
+                EncryptedEmpId = _encryptDecrypt.Encrypt(Convert.ToString(e.EmployeeId)), // Encrypting EmployeeId for security
                 EmployeeName = e.EmployeeName,
                 Email = e.Email,
                 Gender = e.Gender,
@@ -52,12 +57,19 @@ namespace DotNetCoreMVC_CRUD.Controllers
                 // Map the view model to the database schema model
                 var employee = new EmployeeMaster_Schema
                 {
-                    EmployeeId = (employeeModel.EmployeeId != null) ? (int)employeeModel.EmployeeId : 0,
                     EmployeeName = employeeModel.EmployeeName,
                     Email = employeeModel.Email,
                     Gender = employeeModel.Gender,
                     DateOfBirth = employeeModel.DateOfBirth,
                 };
+
+                // Decrypting EmployeeId
+                if (!string.IsNullOrEmpty(employeeModel.EncryptedEmpId)
+                    && int.TryParse(_encryptDecrypt.Decrypt(HttpUtility.UrlDecode(employeeModel.EncryptedEmpId).Replace(" ", "+")), out int empId) && empId > 0)
+                {
+                    employee.EmployeeId = empId; 
+                }
+
                 if (employee.EmployeeId > 0)
                 {
                     employee.UpdatedAt = DateTime.Now;
@@ -78,13 +90,16 @@ namespace DotNetCoreMVC_CRUD.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteEmployee(int empId)
+        public async Task<IActionResult> DeleteEmployee(string empId)
         {
-            if (empId <= 0)
+            empId = HttpUtility.UrlDecode(empId);
+            empId = empId.Replace(" ", "+");
+            int id = int.Parse(_encryptDecrypt.Decrypt(empId));
+            if (id <= 0)
             {
                 return NotFound(); // If empId is invalid, return NotFound
             }
-            var employee = await _appDbContext.EmployeeMaster.FindAsync(empId);
+            var employee = await _appDbContext.EmployeeMaster.FindAsync(id);
             if (employee == null)
             {
                 return NotFound();
@@ -99,7 +114,9 @@ namespace DotNetCoreMVC_CRUD.Controllers
         [HttpGet]
         public async Task<IActionResult> EditEmployee(string id)
         {
-            if (int.TryParse(id, out int empId))
+            id = HttpUtility.UrlDecode(id);
+            id = id.Replace(" ", "+");
+            if (int.TryParse(_encryptDecrypt.Decrypt(id), out int empId))
             {
                 var emp = await _appDbContext.EmployeeMaster.FindAsync(empId);
                 if (emp == null)
@@ -112,7 +129,8 @@ namespace DotNetCoreMVC_CRUD.Controllers
                     EmployeeName = emp.EmployeeName,
                     Gender = emp.Gender,
                     DateOfBirth = emp.DateOfBirth,
-                    Email = emp.Email
+                    Email = emp.Email,
+                    EncryptedEmpId = id
                 };
                 return View("CreateEmployee", empModel);
             }

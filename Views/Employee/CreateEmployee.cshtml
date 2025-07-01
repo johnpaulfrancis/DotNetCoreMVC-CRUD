@@ -10,7 +10,7 @@
                 <h4 class="card-title text-primary mb-5">Create Employee</h4>
                 <form asp-action="CreateEmployee">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="EmployeeId" />
+                    <input type="hidden" asp-for="EncryptedEmpId" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="row">
                         <div class="col-md-6 mb-4">
