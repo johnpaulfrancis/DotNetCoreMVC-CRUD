@@ -57,9 +57,17 @@ namespace DotNetCoreMVC_CRUD.Controllers
                     Email = employeeModel.Email,
                     Gender = employeeModel.Gender,
                     DateOfBirth = employeeModel.DateOfBirth,
-                    CreatedAt = DateTime.Now
                 };
-                _appDbContext.EmployeeMaster.Add(employee); // Add the new employee to the database context
+                if (employee.EmployeeId > 0)
+                {
+                    employee.UpdatedAt = DateTime.Now;
+                    _appDbContext.EmployeeMaster.Update(employee); //Update the employee to the database context
+                }
+                else
+                {
+                    employee.CreatedAt = DateTime.Now;
+                    _appDbContext.EmployeeMaster.Add(employee); // Add the new employee to the database context
+                }
                 await _appDbContext.SaveChangesAsync();
                 return RedirectToAction("Index"); // Redirect to the Index action after successful creation
             }
@@ -84,6 +92,31 @@ namespace DotNetCoreMVC_CRUD.Controllers
             _appDbContext.EmployeeMaster.Remove(employee); // Remove the employee from the database context
             await _appDbContext.SaveChangesAsync();
             return RedirectToAction("Index"); // Redirect to the Index action after successful deletion
+        }
+
+        // GET: Edit Employee
+        //parameter should be what we given after "asp-route-" in the anchor tag
+        [HttpGet]
+        public async Task<IActionResult> EditEmployee(string id)
+        {
+            if (int.TryParse(id, out int empId))
+            {
+                var emp = await _appDbContext.EmployeeMaster.FindAsync(empId);
+                if (emp == null)
+                {
+                    return NotFound();
+                }
+                var empModel = new EmployeeMasterModel
+                {
+                    EmployeeId = emp.EmployeeId,
+                    EmployeeName = emp.EmployeeName,
+                    Gender = emp.Gender,
+                    DateOfBirth = emp.DateOfBirth,
+                    Email = emp.Email
+                };
+                return View("CreateEmployee", empModel);
+            }
+            return View();
         }
     }
 }
